@@ -1,9 +1,11 @@
-use std::{fs::File, io};
-use uuid::Uuid;
 use clap::Parser;
-use serde_yaml;
-use serde_derive::{self, Deserialize, Serialize};
 use handlebars::Handlebars;
+use serde_derive::{self, Deserialize, Serialize};
+use serde_yaml;
+use std::fs::File;
+use std::process::{Command, Output};
+use std::{error, io};
+use uuid::Uuid;
 
 /*
 * BlDr
@@ -13,9 +15,11 @@ use handlebars::Handlebars;
 #[derive(Parser, Debug)]
 struct BlDr {
     #[arg(short, long)]
+    /// specfile template
     spec_file: String,
 
     #[arg(short, long)]
+    /// value file used to render templated specfile
     value_file: String,
 }
 
@@ -36,34 +40,28 @@ struct Values {
 
 /*
 * get_values_from_file
-* 
+*
 * Takes a String representing the name of the file to open.
 * Reads the contents of the file and returns the Values type.
 */
-fn get_values_from_file(file_name: String) -> Result<Values, String> {
-    let f = match File::open(file_name) {
-        Ok(f) => f,
-        Err(e) => return Err(e.to_string()),
-    };
-
-    let v: Values = match serde_yaml::from_reader(f) {
-        Ok(v) => v,
-        Err(e) => return Err(e.to_string()),
-    };
- 
+fn get_values_from_file(file_name: String) -> Result<Values, Box<dyn error::Error>> {
+    let f = File::open(file_name)?;
+    let v: Values = serde_yaml::from_reader(f)?;
     Ok(v)
 }
 
 /*
-* new_tmp_file
+* rpmbuild
 *
-* Creates a new file at a given directory. File is named with a
-* uuid to ensure uniqueness.
+* Run rpmbuild for passed in specfile.
 */
-fn new_tmp_file(tmp_dir: String) -> Result<File, io::Error> {
-    let id = Uuid::new_v4();
-    let tmp_file = File::create(format!("{}/{}.spec", tmp_dir, id))?;
-    Ok(tmp_file)
+fn rpmbuild(specfile: &String) -> io::Result<Output> {
+    let cmd: io::Result<Output> = Command::new("/usr/bin/rpmbuild")
+        .arg("-bb")
+        .arg(specfile.to_string())
+        .output();
+
+    cmd
 }
 
 fn main() {
@@ -75,7 +73,7 @@ fn main() {
         std::process::exit(1)
     };
 
-    let v = match get_values_from_file(flags.value_file) {
+    let v: Values = match get_values_from_file(flags.value_file) {
         Ok(v) => v,
         Err(e) => {
             println!("error getting values from file: {}", e);
@@ -83,17 +81,23 @@ fn main() {
         }
     };
 
-    let f = match new_tmp_file("/tmp".to_string()) {
+    let name = format!("/tmp/{}.spec", Uuid::new_v4());
+    let f: File = match File::create(&name) {
         Ok(f) => f,
         Err(e) => {
-            println!("error opening file for write: {}", e);
+            println!("error creating tmp file: {}", e);
             std::process::exit(1)
         }
     };
 
     template.render_to_write("specfile", &v, f).unwrap();
 
-    // todo: build specfile with rpmbuild
-    // rpmbuild -bb <specfile>
-
+    match rpmbuild(&name) {
+        Ok(out) => {
+            println!("{:?}", out)
+        }
+        Err(e) => {
+            println!("{:?}", e)
+        }
+    };
 }
