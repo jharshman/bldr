@@ -36,6 +36,7 @@ struct Values {
     release: i32,
     summary: String,
     description: String,
+    packager: String,
 }
 
 /*
@@ -94,10 +95,26 @@ fn main() {
 
     match rpmbuild(&name) {
         Ok(out) => {
-            println!("{:?}", out)
+            if !out.stdout.is_empty() {
+                match String::from_utf8(out.stdout) {
+                    Ok(standard_output) => {
+                        println!("rpmbuild status {}:\n {}", out.status, standard_output)
+                    }
+                    Err(e) => println!("{}", e),
+                }
+            }
+            if !out.stderr.is_empty() {
+                match String::from_utf8(out.stderr) {
+                    Ok(standard_error) => {
+                        println!("rpmbuild status {}:\n {}", out.status, standard_error)
+                    }
+                    Err(e) => println!("{}", e),
+                }
+            }
         }
         Err(e) => {
-            println!("{:?}", e)
+            println!("{}", e);
+            std::process::exit(1)
         }
     };
 }

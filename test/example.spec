@@ -5,10 +5,10 @@
 Name: %{name}
 Version: %{version}
 Release: %{release}
+License: GPLv2
 Packager: {{ packager }}
 Summary: {{ summary }}
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
-BuildRequires: {{ requires }}
 
 %description
 {{ description }}
@@ -22,4 +22,3 @@ BuildRequires: {{ requires }}
 %clean
 
 %files
-
