@@ -13,7 +13,12 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
 %description
 {{ description }}
 
+%prep
+%setup -q
+
 %build
+ls -l %{_builddir}/
+/usr/local/go/bin/go build -v main.go
 
 %install
 

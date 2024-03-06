@@ -82,7 +82,7 @@ fn main() {
         }
     };
 
-    let name = format!("/tmp/{}.spec", Uuid::new_v4());
+    let name = format!("/root/rpmbuild/SPECS/{}.spec", Uuid::new_v4());
     let f: File = match File::create(&name) {
         Ok(f) => f,
         Err(e) => {
