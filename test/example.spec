@@ -9,15 +9,15 @@ License: GPLv2
 Packager: {{ packager }}
 Summary: {{ summary }}
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}
+Source: hello-v1.0.0.tar.gz
 
 %description
 {{ description }}
 
 %prep
-%setup -q
+%setup -qn hello
 
 %build
-ls -l %{_builddir}/
 /usr/local/go/bin/go build -v main.go
 
 %install
