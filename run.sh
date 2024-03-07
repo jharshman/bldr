@@ -6,26 +6,20 @@ Usage: $0 [options]
 
 Options:
     --source_dir    Path to source code to build
-    --semver        Version to publish as
     --help          Display usage
 
 Example:
-    $0 --source_dir ./Projects/fwsync --semver v2.0.0
+    $0 --source_dir ./Projects/fwsync
 EOM
 }
 
 main() {
     local _source_dir
-    local _semver
 
     while (( $# )); do
         case "$1" in
         --source-dir)
             _source_dir=$2
-            shift 2
-            ;;
-        --semver)
-            _semver=$2
             shift 2
             ;;
         --help)
