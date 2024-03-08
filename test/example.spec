@@ -18,7 +18,7 @@ Source: %{name}.tar.gz
 %setup -qn %{name}
 
 %build
-/usr/local/go/bin/go build -v main.go
+CGO_ENABLED=0 /usr/local/go/bin/go build -v main.go
 
 %install
 
@@ -27,3 +27,4 @@ Source: %{name}.tar.gz
 %clean
 
 %files
+%defattr{-,root,root,-}
