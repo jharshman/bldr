@@ -15,11 +15,16 @@ EOM
 
 main() {
     local _source_dir
+    local _rpmbuild_mnt
 
     while (( $# )); do
         case "$1" in
         --source-dir)
             _source_dir=$2
+            shift 2
+            ;;
+        --rpmbuild-mnt)
+            _rpmbuild_mnt=$2
             shift 2
             ;;
         --help)
@@ -33,21 +38,27 @@ main() {
         esac
     done
 
+    mkdir -p $_rpmbuild_mnt/SOURCES
+    mkdir -p $_rpmbuild_mnt/RPMS
+
+    local _project
+    _project=$(basename $_source_dir)
+
     pushd $_source_dir/.. > /dev/null
-    tar -czv --exclude-vcs -f $(basename $_source_dir).tar.gz $(basename $_source_dir)
+    tar -czv --exclude-vcs -f $_project.tar.gz $_project
     popd > /dev/null
-    mv $_source_dir/../$(basename $_source_dir).tar.gz SOURCES/
+    mv $_source_dir/../$_project.tar.gz $_rpmbuild_mnt/SOURCES/
 
     # run the bldr
-    docker build -f Dockerfile-rpmbuild -t hello-release:latest .
+    #docker build -f Dockerfile-rpmbuild -t $_project-release:latest .
     docker run \
         --rm \
-        -v $(PWD)/test:/root/test \
-        -v $(PWD)/SOURCES:/root/rpmbuild/SOURCES \
-        -v $(PWD)/RPMS:/root/rpmbuild/RPMS \
-        hello-release:latest \
-        --spec-file /root/test/example.spec \
-        --value-file /root/test/values.yaml \
+        -v $_source_dir:/root/src \
+        -v $_rpmbuild_mnt/SOURCES:/root/rpmbuild/SOURCES \
+        -v $_rpmbuild_mnt/RPMS:/root/rpmbuild/RPMS \
+        $_project-release:latest \
+        --spec-file /root/src/build/example.spec \
+        --value-file /root/src/build/values.yaml \
         ;
 }
 
