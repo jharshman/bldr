@@ -27,4 +27,3 @@ CGO_ENABLED=0 /usr/local/go/bin/go build -v main.go
 %clean
 
 %files
-%defattr{-,root,root,-}

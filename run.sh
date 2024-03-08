@@ -39,12 +39,13 @@ main() {
     mv $_source_dir/../$(basename $_source_dir).tar.gz SOURCES/
 
     # run the bldr
+    docker build -f Dockerfile-rpmbuild -t hello-release:latest .
     docker run \
         --rm \
         -v $(PWD)/test:/root/test \
         -v $(PWD)/SOURCES:/root/rpmbuild/SOURCES \
         -v $(PWD)/RPMS:/root/rpmbuild/RPMS \
-        bldr:latest \
+        hello-release:latest \
         --spec-file /root/test/example.spec \
         --value-file /root/test/values.yaml \
         ;
