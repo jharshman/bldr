@@ -16,6 +16,7 @@ EOM
 main() {
     local _source_dir
     local _rpmbuild_mnt
+    local _project
 
     while (( $# )); do
         case "$1" in
@@ -38,19 +39,18 @@ main() {
         esac
     done
 
-    mkdir -p $_rpmbuild_mnt/SOURCES
-    mkdir -p $_rpmbuild_mnt/RPMS
-
-    local _project
+    _source_dir=$(readlink -f $_source_dir)
+    _rpmbuild_mnt=$(readlink -f $_rpmbuild_mnt)
+    mkdir -p $_rpmbuild_mnt/{SOURCES,RPMS}
     _project=$(basename $_source_dir)
 
     pushd $_source_dir/.. > /dev/null
     tar -czv --exclude-vcs -f $_project.tar.gz $_project
+    mv $_project.tar.gz $_rpmbuild_mnt/SOURCES/
     popd > /dev/null
-    mv $_source_dir/../$_project.tar.gz $_rpmbuild_mnt/SOURCES/
 
     # run the bldr
-    #docker build -f Dockerfile-rpmbuild -t $_project-release:latest .
+    docker build -f Dockerfile-rpmbuild -t $_project-release:latest .
     docker run \
         --rm \
         -v $_source_dir:/root/src \
