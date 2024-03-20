@@ -1,10 +1,10 @@
 mod rpm;
+use rpm::Build;
 
 use anyhow::Result;
 use clap::Parser;
 use handlebars::Handlebars;
-use rpm::Build;
-use serde_derive::{self, Deserialize, Serialize};
+use serde_derive::{Deserialize, Serialize};
 use serde_yaml;
 use std::fs::File;
 use uuid::Uuid;

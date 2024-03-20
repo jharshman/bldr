@@ -5,7 +5,9 @@ usage() {
 Usage: $0 [options]
 
 Options:
-    --source_dir    Path to source code to build
+    --source-dir    Path to source code to build
+    --rpmbuild-mnt
+    --dockerfile
     --help          Display usage
 
 Example:
