@@ -1,10 +1,12 @@
+mod rpm;
+
+use anyhow::Result;
 use clap::Parser;
 use handlebars::Handlebars;
+use rpm::Build;
 use serde_derive::{self, Deserialize, Serialize};
 use serde_yaml;
 use std::fs::File;
-use std::process::{Command, Output};
-use std::{error, io};
 use uuid::Uuid;
 
 /*
@@ -45,24 +47,10 @@ struct Values {
 * Takes a String representing the name of the file to open.
 * Reads the contents of the file and returns the Values type.
 */
-fn get_values_from_file(file_name: String) -> Result<Values, Box<dyn error::Error>> {
+fn get_values_from_file(file_name: String) -> Result<Values> {
     let f = File::open(file_name)?;
     let v: Values = serde_yaml::from_reader(f)?;
     Ok(v)
-}
-
-/*
-* rpmbuild
-*
-* Run rpmbuild for passed in specfile.
-*/
-fn rpmbuild(specfile: &String) -> io::Result<Output> {
-    let cmd: io::Result<Output> = Command::new("/usr/bin/rpmbuild")
-        .arg("-bb")
-        .arg(specfile.to_string())
-        .output();
-
-    cmd
 }
 
 fn main() {
@@ -93,7 +81,13 @@ fn main() {
 
     template.render_to_write("specfile", &v, f).unwrap();
 
-    match rpmbuild(&name) {
+    let r = rpm::Rpm {
+        bin_path: "/usr/bin/rpmbuild",
+        specfile: name.as_str(),
+        build_flags: "-bb",
+    };
+
+    match r.build() {
         Ok(out) => {
             if !out.stdout.is_empty() {
                 match String::from_utf8(out.stdout) {
@@ -113,8 +107,7 @@ fn main() {
             }
         }
         Err(e) => {
-            println!("{}", e);
-            std::process::exit(1)
+            println!("{}", e)
         }
     };
 }
