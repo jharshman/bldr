@@ -19,6 +19,8 @@ main() {
     local _source_dir
     local _rpmbuild_mnt
     local _dockerfile
+    local _specfile
+    local _value_file
     local _project
 
     while (( $# )); do
@@ -35,6 +37,14 @@ main() {
             _dockerfile=$2
             shift 2
             ;;
+        --specfile)
+            _specfile=$2
+            shift 2
+            ;;
+        --value-file)
+            _value_file=$2
+            shift 2
+            ;;
         --help)
             usage
             exit 0
@@ -46,8 +56,9 @@ main() {
         esac
     done
 
+    set -x
     _source_dir=$(readlink -f $_source_dir)
-    _rpmbuild_mnt=$(readlink -f $_rpmbuild_mnt)
+    #_rpmbuild_mnt=$(readlink -f $_rpmbuild_mnt)
     _project=$(basename $_source_dir)
     mkdir -p $_rpmbuild_mnt/{SOURCES,RPMS}
 
@@ -64,8 +75,8 @@ main() {
         -v $_rpmbuild_mnt/SOURCES:/root/rpmbuild/SOURCES \
         -v $_rpmbuild_mnt/RPMS:/root/rpmbuild/RPMS \
         $_project-release:latest \
-        --spec-file /root/src/build/example.spec \
-        --value-file /root/src/build/values.yaml \
+        --spec-file /root/src/build/spec/example.spec \
+        --value-file /root/src/build/spec/values.yaml \
         ;
 }
 
