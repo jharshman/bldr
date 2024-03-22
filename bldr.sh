@@ -6,14 +6,18 @@ Usage: $0 [options]
 
 Options:
     --source-dir    Path to source code to build
-    --rpmbuild-mnt
-    --dockerfile
-    --specfile
-    --value-file
+    --rpmbuild-mnt  Path to rpmbuild tree mounts. This is where your RPM will show up.
+    --dockerfile    Path to your Dockerfile. This Dockerfile defines the build environment.
+    --specfile      Path to your app's specfile. This should be a template.
+    --value-file    Path to the values file. This contains values to render the template.
     --help          Display usage
 
 Example:
-    $0 --source_dir ./Projects/fwsync
+    $0 --source_dir $HOME/Projects/fwsync \
+        --rpmbuild-mnt /tmp/rpmbuild/ \
+        --dockerfile $HOME/Projects/fwsync/build/Dockerfile
+        --specfile $HOME/Projects/fwsync/build/spec/fwsync.spec
+        --value-file $HOME/Projects/fwsync/build/spec/values.yaml
 EOM
 }
 
@@ -58,7 +62,6 @@ main() {
         esac
     done
 
-    set -x
     _source_dir=$(readlink -f $_source_dir)
     _project=$(basename $_source_dir)
     _specfile=$(echo $_specfile | sed "s|$_source_dir||")
