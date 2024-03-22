@@ -13,11 +13,12 @@ Options:
     --help          Display usage
 
 Example:
-    $0 --source_dir $HOME/Projects/fwsync \
-        --rpmbuild-mnt /tmp/rpmbuild/ \
-        --dockerfile $HOME/Projects/fwsync/build/Dockerfile
-        --specfile $HOME/Projects/fwsync/build/spec/fwsync.spec
-        --value-file $HOME/Projects/fwsync/build/spec/values.yaml
+    $(basename $0) \\
+        --source_dir /path/to/project/source \\
+        --rpmbuild-mnt /tmp/rpmbuild/ \\
+        --dockerfile /path/to/project/source/Dockerfile \\
+        --specfile /path/to/project/specfile/fwsync.spec \\
+        --value-file /path/to/project/values/values.yaml
 EOM
 }
 

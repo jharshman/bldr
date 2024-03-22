@@ -21,3 +21,11 @@ RUN zypper in -y wget
 RUN wget https://go.dev/dl/go1.22.1.linux-amd64.tar.gz && tar -C /usr/local -xzf go1.22.1.linux-amd64.tar.gz
 RUN export PATH=$PATH:/usr/local/go/bin
 ```
+
+### Quick Start
+
+You don't have to clone this repo or install a binary to start using bldr. The `bldr.sh` script will run the utility and can be used as follows.
+
+```bash
+$ curl https://raw.githubusercontent.com/jharshman/bldr/master/bldr.sh | bash -s -- --help
+```
