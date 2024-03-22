@@ -60,8 +60,9 @@ main() {
 
     set -x
     _source_dir=$(readlink -f $_source_dir)
-    #_rpmbuild_mnt=$(readlink -f $_rpmbuild_mnt)
     _project=$(basename $_source_dir)
+    _specfile=$(echo $_specfile | sed "s|$_source_dir||")
+    _value_file=$(echo $_value_file | sed "s|$_source_dir||")
     mkdir -p $_rpmbuild_mnt/{SOURCES,RPMS}
 
     pushd $_source_dir/.. > /dev/null
@@ -77,8 +78,8 @@ main() {
         -v $_rpmbuild_mnt/SOURCES:/root/rpmbuild/SOURCES \
         -v $_rpmbuild_mnt/RPMS:/root/rpmbuild/RPMS \
         $_project-release:latest \
-        --spec-file /root/src/build/spec/example.spec \
-        --value-file /root/src/build/spec/values.yaml \
+        --spec-file /root/src/$_specfile \
+        --value-file /root/src/$_value_file \
         ;
 }
 
