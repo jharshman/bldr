@@ -8,6 +8,8 @@ Options:
     --source-dir    Path to source code to build
     --rpmbuild-mnt
     --dockerfile
+    --specfile
+    --value-file
     --help          Display usage
 
 Example:
