@@ -1,6 +1,6 @@
 # Bldr
 
-![The Boulder](res/thebldr.jpg "The Boulder")
+![The Boulder](res/thebldr.png "The Boulder")
 
 Perform RPM builds using a templated RPM specfile.
 
