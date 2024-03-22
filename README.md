@@ -2,7 +2,9 @@
 
 ![The Boulder](res/thebldr.png "The Boulder")
 
-Perform RPM builds using a templated RPM specfile.
+### Summary
+
+Bldr (Pronounced Boulder) performs RPM builds using a templated RPM specfile.
 
 Given a specfile and value file, `bldr` will facilitate rendering the specfile and performing an RPM build. This utility is distributed as a container image
 `jharshman/bldr`.
