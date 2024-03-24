@@ -74,7 +74,6 @@ main() {
 
     # run the bldr
     docker build -f $_dockerfile -t $_project-release:latest .
-    set -x
     docker run \
         --rm \
         -v $_specfile:/root/src/$(basename $_specfile) \
