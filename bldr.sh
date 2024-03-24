@@ -5,7 +5,7 @@ usage() {
 Usage: $0 [options]
 
 Options:
-    --source-dir    Path to source code to build
+    --source-dir    Path to source code to build.
     --rpmbuild-mnt  Path to rpmbuild tree mounts. This is where your RPM will show up.
     --dockerfile    Path to your Dockerfile. This Dockerfile defines the build environment.
     --specfile      Path to your app's specfile. This should be a template.
@@ -65,8 +65,6 @@ main() {
 
     _source_dir=$(readlink -f $_source_dir)
     _project=$(basename $_source_dir)
-    _specfile=$(echo $_specfile | sed "s|$_source_dir||")
-    _value_file=$(echo $_value_file | sed "s|$_source_dir||")
     mkdir -p $_rpmbuild_mnt/{SOURCES,RPMS}
 
     pushd $_source_dir/.. > /dev/null
@@ -79,12 +77,13 @@ main() {
     set -x
     docker run \
         --rm \
-        -v $_source_dir:/root/src \
+        -v $_specfile:/root/src/$(basename $_specfile) \
+        -v $_value_file:/root/src/$(basename $_value_file) \
         -v $_rpmbuild_mnt/SOURCES:/root/rpmbuild/SOURCES \
         -v $_rpmbuild_mnt/RPMS:/root/rpmbuild/RPMS \
         $_project-release:latest \
-        --spec-file /root/src/$_specfile \
-        --value-file /root/src/$_value_file \
+        --spec-file /root/src/$(basename $_specfile) \
+        --value-file /root/src/$(basename $_value_file) \
         ;
 }
 
