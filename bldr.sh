@@ -68,7 +68,7 @@ main() {
     mkdir -p $_rpmbuild_mnt/{SOURCES,RPMS}
 
     pushd $_source_dir/.. > /dev/null
-    tar -czv --exclude-vcs -f $_project.tar.gz $_project
+    tar -czv --exclude "terraform" --exclude-vcs -f $_project.tar.gz $_project
     mv $_project.tar.gz $_rpmbuild_mnt/SOURCES/
     popd > /dev/null
 
